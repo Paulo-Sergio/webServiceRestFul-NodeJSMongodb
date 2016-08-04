@@ -1,0 +1,24 @@
+{
+  "name": "screencast_resful",
+  "version": "0.0.1",
+  "description": "App base para screencast restful",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb.git"
+  },
+  "keywords": [
+    "screencast",
+    "rest",
+    "restful"
+  ],
+  "author": "Paulo Franca",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb/issues"
+  },
+  "homepage": "https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb#readme"
+}
