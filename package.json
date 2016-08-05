@@ -20,5 +20,11 @@
   "bugs": {
     "url": "https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb/issues"
   },
-  "homepage": "https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb#readme"
+  "homepage": "https://github.com/Paulo-Sergio/webServiceRestFul-NodeJSMongodb#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongoose": "^4.5.8",
+    "validator": "^5.5.0"
+  }
 }
