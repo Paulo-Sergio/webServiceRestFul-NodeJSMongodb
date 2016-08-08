@@ -1,30 +1,8 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var db_string = 'mongodb://localhost/screencast_resful';
-var mongoose = require('mongoose').connect(db_string);
-var db = mongoose.connection;
+var app = require('./app_config.js');
+var userController = require('./controller/userController.js');
 
-var User; //modeel
+var validator = require('validator');
 
-db.on('error', console.error.bind(console, 'Erro ao conectar no banco'));
-db.once('open', function(){
-  var userSchema = mongoose.Schema({
-    fullname: String,
-    email: String,
-    password: String,
-    created_at: Date
-  });
-
-  User = mongoose.model('User', userSchema);
-});
-
-app.listen(5000);
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
 
 app.get('/', function(req, res){
   res.end('Servidor ON!');
@@ -34,12 +12,9 @@ app.get('/', function(req, res){
 ********RETORNAR TODOS USERS****************
 ********************************************/
 app.get('/users', function(req, res){
-  User.find({}, function(error, users){
-    if(error){
-      res.json({error: 'Não foi possivel retornar os usuarios'});
-    }else{
-      res.json(users);
-    }
+  userController.list(function(resp){
+    //só quando o banco retornar a resposta é que a function de callback sera executado
+    res.json(resp);
   });
 });
 
@@ -47,14 +22,10 @@ app.get('/users', function(req, res){
 ********RETORNAR USER FOR ID****************
 ********************************************/
 app.get('/users/:id', function(req, res){
-  var id = req.param('id'); //pegando id que vem do parametro
+  var id = validator.trim(validator.escape(req.param('id'))); //pegando id que vem do parametro
 
-  User.findById(id, function(error, user){
-    if(error){
-      res.json({error: 'Não foi possivel retornar o usuario'});
-    }else{
-      res.json(user);
-    }
+  userController.user(id, function(resp){
+    res.json(resp);
   });
 });
 
@@ -62,21 +33,12 @@ app.get('/users/:id', function(req, res){
 *************CREATE NEW USER****************
 ********************************************/
 app.post('/users', function(req, res){
-  var fullname = req.param('fullname');
-  var email = req.param('email');
-  var password = req.param('password');
+  var fullname = validator.trim(validator.escape(req.param('fullname')));
+  var email = validator.trim(validator.escape(req.param('email')));
+  var password = validator.trim(validator.escape(req.param('password')));
 
-  new User({
-    'fullname': fullname,
-    'email': email,
-    'password': password,
-    'created_at': new Date()
-  }).save(function(error, user){
-    if(error){
-      res.json({error: 'Não foi possivel salvar o usuario!'})
-    }else{
-      res.json(user);
-    }
+  userController.save(fullname, email, password, function(resp){
+    res.json(resp);
   });
 });
 
@@ -84,47 +46,23 @@ app.post('/users', function(req, res){
 *************UPDATE USER********************
 ********************************************/
 app.put('/users', function(req, res){
-  var id = req.param('id');
-  var fullname = req.param('fullname');
-  var email = req.param('email');
-  var password = req.param('password');
+  var id = validator.trim(validator.escape(req.param('id')));
+  var fullname = validator.trim(validator.escape(req.param('fullname')));
+  var email = validator.trim(validator.escape(req.param('email')));
+  var password = validator.trim(validator.escape(req.param('password')));
 
-  User.findById(id, function(error, user){
-    if(fullname){
-      user.fullname = fullname;
-    }
-    if(email){
-      user.email = email;
-    }
-    if(password){
-      user.password = password;
-    }
-
-    user.save(function(error, user){
-      if(error){
-        res.json({error: 'Não foi possivel atualizar usuario'});
-      }else{
-        res.json(user);
-      }
-    });
-  });
+  userController.update(id, fullname, email, password, function(resp){
+    res.json(resp);
+  })
 });
 
 /*******************************************
 *************DELETE USER FOR ID*************
 ********************************************/
 app.delete('/users/:id', function(req, res){
-  var id = req.param('id');
+  var id = validator.trim(validator.escape(req.param('id')));
 
-  User.findById(id, function(error, user){
-    if(error){
-      res.json({error: 'Não foi possivel excluir usuario'});
-    }else{
-      user.remove(function(error){
-        if(!error){
-          res.json({response: 'Usuario excluido com sucesso'});
-        }
-      });
-    }
+  userController.delete(id, function(resp){
+    res.json(resp);
   });
 });
