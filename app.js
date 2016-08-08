@@ -5,7 +5,7 @@ var db_string = 'mongodb://localhost/screencast_resful';
 var mongoose = require('mongoose').connect(db_string);
 var db = mongoose.connection;
 
-var User; //model
+var User; //modeel
 
 db.on('error', console.error.bind(console, 'Erro ao conectar no banco'));
 db.once('open', function(){
