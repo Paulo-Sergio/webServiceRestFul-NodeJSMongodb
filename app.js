@@ -23,40 +23,108 @@ app.listen(5000);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
-  extends: true
+  extended: true
 }));
 
 app.get('/', function(req, res){
-  new User({
-    fullname: 'Teste teste',
-    email: 'teste@hotmail.com',
-    password: 123456,
-    email: new Date()
-  }).save(function(error, user){
+  res.end('Servidor ON!');
+});
+
+/*******************************************
+********RETORNAR TODOS USERS****************
+********************************************/
+app.get('/users', function(req, res){
+  User.find({}, function(error, users){
     if(error){
-      res.json({error: 'Não foi possivel salvar usuario'});
+      res.json({error: 'Não foi possivel retornar os usuarios'});
+    }else{
+      res.json(users);
+    }
+  });
+});
+
+/*******************************************
+********RETORNAR USER FOR ID****************
+********************************************/
+app.get('/users/:id', function(req, res){
+  var id = req.param('id'); //pegando id que vem do parametro
+
+  User.findById(id, function(error, user){
+    if(error){
+      res.json({error: 'Não foi possivel retornar o usuario'});
     }else{
       res.json(user);
     }
   });
-  //res.end('Servidor ON!');
 });
-app.get('/users', function(req, res){
-  res.json([
-    {name: 'paulo'},
-    {name: 'iza'},
-    {name: 'mimi'}
-  ]);
-});
-app.get('/users/:id', function(req, res){
 
-});
+/*******************************************
+*************CREATE NEW USER****************
+********************************************/
 app.post('/users', function(req, res){
-  res.end('post users');
+  var fullname = req.param('fullname');
+  var email = req.param('email');
+  var password = req.param('password');
+
+  new User({
+    'fullname': fullname,
+    'email': email,
+    'password': password,
+    'created_at': new Date()
+  }).save(function(error, user){
+    if(error){
+      res.json({error: 'Não foi possivel salvar o usuario!'})
+    }else{
+      res.json(user);
+    }
+  });
 });
+
+/*******************************************
+*************UPDATE USER********************
+********************************************/
 app.put('/users', function(req, res){
-  res.end('put users');
+  var id = req.param('id');
+  var fullname = req.param('fullname');
+  var email = req.param('email');
+  var password = req.param('password');
+
+  User.findById(id, function(error, user){
+    if(fullname){
+      user.fullname = fullname;
+    }
+    if(email){
+      user.email = email;
+    }
+    if(password){
+      user.password = password;
+    }
+
+    user.save(function(error, user){
+      if(error){
+        res.json({error: 'Não foi possivel atualizar usuario'});
+      }else{
+        res.json(user);
+      }
+    });
+  });
 });
+
+/*******************************************
+*************DELETE USER FOR ID*************
+********************************************/
 app.delete('/users/:id', function(req, res){
-  res.end('delete users');
+  var id = req.param('id');
+
+  User.findById(id, function(error, user){
+    if(error){
+      res.json({error: 'Não foi possivel excluir usuario'});
+    }else{
+      user.remove(function(error){
+        if(!error){
+          res.json({response: 'Usuario excluido com sucesso'});
+        }
+      });
+    }
+  });
 });
